@@ -35,15 +35,14 @@ class App extends Component {
           });
         }
         if(change.type==="removed"){
-          let docData = {
-            id:change.doc.id,
-            ...change.doc.data()
-          };
-          let index = this.state.dataTps.indexOf(docData);
-          data = this.state.dataTps.splice(index,1);
+          let removeIndex = this.state.dataTps.map(function(item) { return item.id; }).indexOf(change.doc.id);
+          // remove object
+          // console.log("removeIndex",removeIndex);
+          this.state.dataTps.splice(removeIndex, 1);
         }
       });
       this.setState({dataTps:data});
+      // console.log("TPS DATA ", this.state.dataTps);
     });
   }
 
@@ -77,15 +76,20 @@ class App extends Component {
       });
   }
 
-  addTps(caleg=null,jumlahSuara=null,nama=null){
-    caleg = Math.floor((Math.random() * 20) + 1);
-    jumlahSuara = Math.floor((Math.random() * 1000) + 1);
-    nama = "TPS "+Math.floor((Math.random() * 20) + 1);
+  addTps(caleg=null,jumlahSuara=null,tps=null){
     this.setState({loading:true});
+    tps = "TPS "+Math.floor((Math.random() * 20) + 1);
+    let dataSuara = [];
+    for(let i=1;i<=10;i++){
+      const data = {
+        caleg : i,
+        jumlahSuara : Math.floor((Math.random() * 1000) + 1),
+      };
+      dataSuara.push(data);
+    }    
     tpsCollection.add({
-      caleg:caleg,
-      jumlahSuara:jumlahSuara,
-      nama:nama,
+      tps:tps,
+      dataSuara:dataSuara,
       created_at:FirestoreTimestamp  
     })
     .then(()=>{
@@ -115,8 +119,8 @@ class App extends Component {
   render() {
     const mapped_users = this.state.dataTps.map(data =>
         <li key={data.id} className="App-li">
-            <a href={data.nama} onClick={(e)=>{e.preventDefault();this.showDetail(data.id)}}>
-                {data.nama}
+            <a href={data.tps} onClick={(e)=>{e.preventDefault();this.showDetail(data.id)}}>
+                {data.tps}
             </a>
         </li>
     );    

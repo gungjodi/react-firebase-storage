@@ -3,3 +3,14 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th,tr {
+    border: 1px solid #000;
+    text-align: center;
+    padding: 8px;
+}

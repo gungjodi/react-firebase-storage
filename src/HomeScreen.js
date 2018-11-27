@@ -16,11 +16,21 @@ class HomeScreen extends Component {
     }
   }
 
+  componentWillMount(){
+    this.mounted=false;
+  }
+
   componentDidMount()
   {
-    this.getCaleg();
-    this.dataPerolehanSuaraListener();
-    
+    this.mounted = true;
+    if(this.mounted){
+      this.getCaleg();
+      this.dataPerolehanSuaraListener();
+    }
+  }
+
+  componentWillUnmount(){
+    this.mounted = false;
   }
 
   dataPerolehanSuaraListener(){
@@ -42,13 +52,20 @@ class HomeScreen extends Component {
           const newData = change.doc.data().dataSuara;
           let newState = Object.assign({}, this.state);
           newState.dataPerolehanSuara[modifiedIndex].dataSuara = newData;
-          this.setState(newState);
+          if(this.mounted){
+            this.setState(newState);
+          }
         }
       });
       data.sort(function(a, b) {
           return a.tps - b.tps;
       });
-      this.setState({dataPerolehanSuara:data,loading:false});
+      if(this.mounted){
+        this.setState({dataPerolehanSuara:data,loading:false});
+      }
+    }, 
+    function(error) {
+        console.log(error);
     });
   }
 
@@ -72,7 +89,9 @@ class HomeScreen extends Component {
           ...snapshot.data()
         })
       });
-      this.setState({dataCaleg:data});
+      if(this.mounted){
+        this.setState({dataCaleg:data});
+      }
     })
     .catch(err=>{
       console.log(err);
@@ -95,7 +114,9 @@ class HomeScreen extends Component {
       created_at:FirestoreTimestamp  
     })
     .then(()=>{
-      this.setState({loading:false});
+      if(this.mounted){
+        this.setState({loading:false});
+      }
     })
     .catch(err=>{
       console.log(err);

@@ -2,37 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
+import {Drawer,AppBar,Toolbar,List,CssBaseline,Typography,Divider,IconButton,ListItem,ListItemIcon,ListItemText,Tooltip} from '@material-ui/core';
+import {Menu,ChevronLeft,ChevronRight,Add} from '@material-ui/icons';
+import { BrowserRouter as Router, Route, NavLink} from 'react-router-dom';
 
-import {Drawer,AppBar,Toolbar,List,CssBaseline,Typography,Divider,IconButton,ListItem,ListItemIcon,ListItemText} from '@material-ui/core';
-import {Menu,Home,ChevronLeft,ChevronRight,Inbox,Mail,AssignmentInd} from '@material-ui/icons';
- 
-import styles from './AppStyle';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import AppStyles from './AppStyle';
+import routes from './routes';
 
-import HomeScreen from './HomeScreen';
-import CalegScreen from './CalegScreen';
-
-const routes = [
-    {
-        title : 'Dashboard',
-        icon : <Home />,
-        path : '/',
-        exact : true,
-        component: ()=><HomeScreen />
-    },
-    {
-        title : 'Data Caleg',
-        icon : <AssignmentInd />,
-        path : '/dataCaleg',
-        component : ()=><CalegScreen />
-    },
-    {
-        title : 'Data TPS',
-        icon : <Mail />,
-        path : '/dataTps',
-        component : ()=><h2>Data TPS</h2>
-    }
-];
+const MenuBar = ({route}) => {
+  return(
+    (route.path !== "/" ? <Tooltip title={"Add "+route.title}><IconButton color="inherit"><Add/></IconButton></Tooltip>:null)
+  )
+}
 
 class App extends React.Component {
   state = {
@@ -48,9 +29,24 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme} = this.props;
 
-    const drawer = (
+    const ListItemLink = ({ to,icon,title,activeOnlyWhenExact , ...rest }) => (
+      <Route
+        path={to}
+        exact={activeOnlyWhenExact}
+        children={({ match }) => (
+          <NavLink to={to} {...rest}>
+            <ListItem button selected={match ? true : false}>  
+              <ListItemIcon>{icon}</ListItemIcon>
+              <ListItemText primary={title} />
+            </ListItem>
+          </NavLink>
+        )}
+      />
+    );
+
+    const drawerContent = (
         <div>
             <div className={classes.toolbar}>
                 <IconButton onClick={this.handleDrawerClose}>
@@ -60,59 +56,76 @@ class App extends React.Component {
             <Divider />
             <List>
                 {routes.map((menuItem,index) => (
-                    <Link to={menuItem.path} key={index}>
-                        <ListItem button>
-                            <ListItemIcon>{menuItem.icon}</ListItemIcon>
-                            <ListItemText primary={menuItem.title} />
-                        </ListItem>
-                    </Link>
+                    <ListItemLink to={menuItem.path} icon={menuItem.icon} title={menuItem.title} key={index} activeOnlyWhenExact={true}/>
                 ))}
             </List>
         </div>
+    );
+    
+    const appBar = (
+      <AppBar
+          position="fixed"
+          className={classNames(classes.appBar, {
+              [classes.appBarShift]: this.state.open,
+          })}
+      >
+          <Toolbar disableGutters={!this.state.open}>
+              <IconButton
+                  color="inherit"
+                  aria-label="Open drawer"
+                  onClick={this.handleDrawerOpen}
+                  className={classNames(classes.menuButton, {
+                      [classes.hide]: this.state.open,
+                  })}
+              >
+                  <Menu />
+              </IconButton>
+              {
+                routes.map((route,index)=>(
+                  <Route 
+                      key={index}
+                      path={route.path}
+                      exact={route.exact}
+                      component={()=>(
+                        <div className={classes.rootAppBar}>
+                          <Typography variant="h6" color="inherit" className={classes.grow}>
+                            {route.title}
+                          </Typography>
+                          <MenuBar route={route}/>
+                        </div>
+                      )}
+                  />
+                ))
+              }
+          </Toolbar>
+      </AppBar>
+    );
+
+    const drawerWrapper =(
+      <Drawer
+          variant="permanent"
+          className={classNames(classes.drawer, {
+              [classes.drawerOpen]: this.state.open,
+              [classes.drawerClose]: !this.state.open,
+          })}
+          classes={{
+              paper: classNames({
+              [classes.drawerOpen]: this.state.open,
+              [classes.drawerClose]: !this.state.open,
+              }),
+          }}
+          open={this.state.open}
+      >
+        {drawerContent}
+      </Drawer>
     );
 
     return (
       <Router>
         <div className={classes.root}>
             <CssBaseline />
-            <AppBar
-                position="fixed"
-                className={classNames(classes.appBar, {
-                    [classes.appBarShift]: this.state.open,
-                })}
-            >
-                <Toolbar disableGutters={!this.state.open}>
-                    <IconButton
-                        color="inherit"
-                        aria-label="Open drawer"
-                        onClick={this.handleDrawerOpen}
-                        className={classNames(classes.menuButton, {
-                            [classes.hide]: this.state.open,
-                        })}
-                    >
-                        <Menu />
-                    </IconButton>
-                    <Typography variant="h6" color="inherit" noWrap>
-                        QC
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Drawer
-                variant="permanent"
-                className={classNames(classes.drawer, {
-                    [classes.drawerOpen]: this.state.open,
-                    [classes.drawerClose]: !this.state.open,
-                })}
-                classes={{
-                    paper: classNames({
-                    [classes.drawerOpen]: this.state.open,
-                    [classes.drawerClose]: !this.state.open,
-                    }),
-                }}
-                open={this.state.open}
-            >
-                {drawer}
-            </Drawer>
+            {appBar}
+            {drawerWrapper}
             <main className={classes.content}>
                 <div className={classes.toolbar} />
                 <div>
@@ -137,4 +150,4 @@ App.propTypes = {
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(App);
+export default withStyles(AppStyles, { withTheme: true })(App);

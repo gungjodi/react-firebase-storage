@@ -1,22 +1,30 @@
 const drawerWidth = 240;
 
-const styles = theme => ({
+const AppStyles = theme => ({
     root: {
         display: 'flex',
+    },
+    rootAppBar:{
+        display:'flex',
+        flexGrow: 1,
+        alignItems: 'center',
+    },
+    grow: {
+        flexGrow: 1,
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
         transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
         }),
     },
     appBarShift: {
         marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
         }),
     },
     menuButton: {
@@ -34,19 +42,19 @@ const styles = theme => ({
     drawerOpen: {
         width: drawerWidth,
         transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
         }),
     },
     drawerClose: {
         transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
         }),
         overflowX: 'hidden',
         width: theme.spacing.unit * 7 + 1,
         [theme.breakpoints.up('sm')]: {
-        width: theme.spacing.unit * 9 + 1,
+            width: theme.spacing.unit * 9 + 1,
         },
     },
     toolbar: {
@@ -62,4 +70,4 @@ const styles = theme => ({
     },
 });
 
-export default styles;
+export default AppStyles;

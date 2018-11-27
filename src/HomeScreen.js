@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import './App.css';
 import {FirestoreDB,FirestoreTimestamp} from './FirebaseApp';
 
-const tpsCollection = FirestoreDB.collection('tps');
+const perolehanSuaraCollection = FirestoreDB.collection('perolehanSuara');
 const calegCollection = FirestoreDB.collection('caleg');
 
-class Home extends Component {
+class HomeScreen extends Component {
   constructor()
   {
     super();
     this.state = {
-      dataTps:[],
+      dataPerolehanSuara:[],
       loading:true,
       dataCaleg:[]
     }
@@ -19,12 +19,13 @@ class Home extends Component {
   componentDidMount()
   {
     this.getCaleg();
-    this.dataTpsListener();
+    this.dataPerolehanSuaraListener();
+    
   }
 
-  dataTpsListener(){
+  dataPerolehanSuaraListener(){
     let data = [];
-    tpsCollection.onSnapshot(snapshot=>{
+    perolehanSuaraCollection.onSnapshot(snapshot=>{
       snapshot.docChanges.forEach(change=>{
         if(change.type==="added"){
           data.push({
@@ -34,26 +35,26 @@ class Home extends Component {
         }
         if(change.type==="removed"){
           let removeIndex = this.state.dataTps.map(function(item) { return item.id; }).indexOf(change.doc.id);
-          this.state.dataTps.splice(removeIndex, 1);
+          this.state.dataPerolehanSuara.splice(removeIndex, 1);
         }
         if(change.type==="modified"){
           let modifiedIndex = this.state.dataTps.map(function(item) { return item.id; }).indexOf(change.doc.id);
           const newData = change.doc.data().dataSuara;
           let newState = Object.assign({}, this.state);
-          newState.dataTps[modifiedIndex].dataSuara = newData;
+          newState.dataPerolehanSuara[modifiedIndex].dataSuara = newData;
           this.setState(newState);
         }
       });
       data.sort(function(a, b) {
           return a.tps - b.tps;
       });
-      this.setState({dataTps:data,loading:false});
+      this.setState({dataPerolehanSuara:data,loading:false});
     });
   }
 
   showDetail(key)
   {
-    tpsCollection.doc(key).get()
+    perolehanSuaraCollection.doc(key).get()
       .then((doc)=>{
         console.log(doc.data());
       })
@@ -88,7 +89,7 @@ class Home extends Component {
       };
       dataSuara.push(data);
     }    
-    tpsCollection.add({
+    perolehanSuaraCollection.add({
       tps:tps,
       dataSuara:dataSuara,
       created_at:FirestoreTimestamp  
@@ -101,8 +102,8 @@ class Home extends Component {
     });
   }
 
-  deleteTps(id){
-    tpsCollection.doc(id).delete().then((doc)=>{
+  deletePerolehanSuara(id){
+    perolehanSuaraCollection.doc(id).delete().then((doc)=>{
       console.log(doc," DELETED");
     })
     .catch(err=>{
@@ -122,7 +123,7 @@ class Home extends Component {
       </th>
     );
 
-    const mappedDataTps = this.state.dataTps.map(data=>
+    const mappedDataPerolehanSuara = this.state.dataPerolehanSuara.map(data=>
       <tr key={data.id}>
         <th>
           TPS {data.tps}
@@ -134,12 +135,13 @@ class Home extends Component {
             </td>
           )
         }
-        <td><a title="Delete data" href={data.id} onClick={(e)=>{e.preventDefault();this.deleteTps(data.id)}}>x</a></td>
+        <td><a title="Delete data" href={data.id} onClick={(e)=>{e.preventDefault();this.deletePerolehanSuara(data.id)}}>x</a></td>
       </tr>
     );
     
     return (
       <div className="App">
+        <h2>Data Perolehan Suara</h2>
         <div style={{margin:'50px'}}>
         {
             this.state.loading?
@@ -154,18 +156,19 @@ class Home extends Component {
                     </tr>
                   </thead>
                   <tbody>
-                      {mappedDataTps}
+                      {mappedDataPerolehanSuara}
                   </tbody>
                 </table>
         }
         </div>
         
-        <button onClick={()=>this.addTps()}>
+        {/* <button onClick={()=>this.addTps()}>
           Add Random TPS Data
-        </button>
+        </button> */}
+        
       </div>
     );
   }
 }
 
-export default Home;
+export default HomeScreen;

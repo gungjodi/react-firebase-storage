@@ -1,9 +1,9 @@
 import React from 'react';
 import {Home,Mail,AssignmentInd} from '@material-ui/icons';
 
-import HomeScreen from './HomeScreen';
-import CalegScreen from './CalegScreen';
-import TpsScreen from './TpsScreen';
+import DashboardScreen from './dashboard';
+import CalegScreen,{AddCalegScreen} from './caleg';
+import TpsScreen from './tps';
 
 const routes = [
     {
@@ -11,19 +11,19 @@ const routes = [
         icon : <Home />,
         path : '/',
         exact : true,
-        component: ()=><HomeScreen />,
+        component: props=><DashboardScreen {...props}/>,
     },
     {
         title : 'Data Caleg',
         icon : <AssignmentInd />,
         path : '/dataCaleg',
-        component : ()=><CalegScreen />
+        component : props=><CalegScreen {...props}/>
     },
     {
         title : 'Data TPS',
         icon : <Mail />,
         path : '/dataTps',
-        component : ()=><TpsScreen/>
+        component : props=><TpsScreen {...props}/>
     }
 ];
 

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import './App.css';
-import {FirestoreDB,FirestoreTimestamp} from './FirebaseApp';
+import {Button} from '@material-ui/core';
+import {FirestoreDB} from '../../FirebaseApp';
 
 const calegCollection = FirestoreDB.collection('caleg');
 
-class CalegScreen extends Component{
+class AddCalegScreen extends Component{
     constructor(){
         super();
         this.state={
@@ -58,10 +58,11 @@ class CalegScreen extends Component{
                 <br/>
                 <input type="number" min="1" id="noUrut" placeholder="No Urut" value={this.state.noUrut} onChange={(e)=>this.onTextInputChange(e)}/>
                 <br/>
-                <button onClick={()=>this.onSubmit()}>Simpan</button>
+                <Button onClick={()=>this.onSubmit()}>Simpan</Button>
+
             </div>
         );
     }
 }
 
-export default CalegScreen;
+export default AddCalegScreen;

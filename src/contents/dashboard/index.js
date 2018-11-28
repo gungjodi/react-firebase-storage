@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import './App.css';
-import {FirestoreDB,FirestoreTimestamp} from './FirebaseApp';
+import {FirestoreDB,FirestoreTimestamp} from '../../FirebaseApp';
 
 const perolehanSuaraCollection = FirestoreDB.collection('perolehanSuara');
 const calegCollection = FirestoreDB.collection('caleg');
 
-class HomeScreen extends Component {
+class DashboardScreen extends Component {
   constructor()
   {
     super();
@@ -192,4 +191,4 @@ class HomeScreen extends Component {
   }
 }
 
-export default HomeScreen;
+export default DashboardScreen;

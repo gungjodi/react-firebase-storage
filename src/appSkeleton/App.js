@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import {Drawer,AppBar,Toolbar,List,CssBaseline,Typography,Divider,IconButton,ListItem,ListItemIcon,ListItemText,Tooltip} from '@material-ui/core';
 import {Menu,ChevronLeft,ChevronRight,Add} from '@material-ui/icons';
-import { Route, NavLink, Link } from 'react-router-dom';
+import { Route, Switch, Link } from 'react-router-dom';
 
 import AppStyles from './AppStyle';
 import routes from '../contents/routes';
@@ -23,11 +23,11 @@ class App extends React.Component {
   };
 
   render() {
-    const { classes, theme} = this.props;
+    const {classes,theme} = this.props;
 
-    const MenuBar = ({title,match}) => 
+    const MenuBar = ({title,match,location}) => 
     (
-        match.url ? 
+        match.url!=="/" ? 
         <Tooltip title={"Add "+title}>
           <Link to={`${match.url}/add`} style={{ textDecoration: 'none',color:'black' }}>
             <IconButton color="inherit"><Add/></IconButton>
@@ -35,38 +35,22 @@ class App extends React.Component {
         </Tooltip>:null
     );
 
-    const ListItemLink = ({ to,icon,title,activeOnlyWhenExact , ...rest }) => (
+    const ListItemLink = ({ menuItem , ...rest }) => (
       <Route
-        path={to}
-        exact={activeOnlyWhenExact}
+        path={menuItem.path}
+        exact
         children={({ match }) => (
-          <NavLink to={to} {...rest}>
+          <Link to={menuItem.path} {...rest}>
             <ListItem button selected={match ? true : false}>  
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={title} />
+              <ListItemIcon>{menuItem.icon}</ListItemIcon>
+              <ListItemText primary={menuItem.title} />
             </ListItem>
-          </NavLink>
+          </Link>
         )}
       />
     );
-
-    const drawerContent = (
-        <div>
-            <div className={classes.toolbar}>
-                <IconButton onClick={this.handleDrawerClose}>
-                    {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
-                </IconButton>
-            </div>
-            <Divider />
-            <List>
-                {routes.map((menuItem,index) => (
-                    <ListItemLink to={menuItem.path} icon={menuItem.icon} title={menuItem.title} key={index} activeOnlyWhenExact={true}/>
-                ))}
-            </List>
-        </div>
-    );
     
-    const appBar = (
+    const appBar = ({match}) => (
         <AppBar 
             position="fixed"
             className={classNames(classes.appBar, {
@@ -95,7 +79,7 @@ class App extends React.Component {
                             <Typography variant="h6" color="inherit" className={classes.grow}>
                               {route.title}
                             </Typography>
-                            <MenuBar title={route.title} {...props}/>
+                            <MenuBar title={route.title} {...props} />
                           </div>
                         )}
                     />
@@ -105,7 +89,7 @@ class App extends React.Component {
         </AppBar>
     );
 
-    const drawerWrapper =(
+    const drawerWrapper = ({match})=>(
       <Drawer
           variant="permanent"
           className={classNames(classes.drawer, {
@@ -120,18 +104,28 @@ class App extends React.Component {
           }}
           open={this.state.open}
       >
-        {drawerContent}
+        <div className={classes.toolbar}>
+            <IconButton onClick={this.handleDrawerClose}>
+                {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+            </IconButton>
+        </div>
+        <Divider />
+        <List>
+            {routes.map((menuItem,index) => (
+                <ListItemLink menuItem={menuItem} key={index}/>
+            ))}
+        </List>
       </Drawer>
     );
 
     return (
       <div className={classes.root}>
           <CssBaseline />
-          {appBar}
-          {drawerWrapper}
+          <Route component={appBar}/>
+          <Route component={drawerWrapper}/>
           <main className={classes.content}>
               <div className={classes.toolbar} />
-              <div>
+              <Switch>
                   {routes.map((route,index)=>(
                       <Route 
                           key={index}
@@ -140,7 +134,7 @@ class App extends React.Component {
                           render={route.component}
                       />
                   ))}
-              </div>
+              </Switch>
           </main>
       </div>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 import {Home,Mail,AssignmentInd} from '@material-ui/icons';
 
 import DashboardScreen from './dashboard';
-import CalegScreen,{AddCalegScreen} from './caleg';
+import CalegScreen from './caleg';
 import TpsScreen from './tps';
 
 const routes = [
@@ -17,7 +17,7 @@ const routes = [
         title : 'Data Caleg',
         icon : <AssignmentInd />,
         path : '/dataCaleg',
-        component : props=><CalegScreen {...props}/>
+        component : props=><CalegScreen {...props}/>,
     },
     {
         title : 'Data TPS',

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Route, Switch, Link } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import {FirestoreDB} from '../../FirebaseApp';
+import AddCalegScreen from './add';
+
 const calegCollection = FirestoreDB.collection('caleg');
 
 class CalegScreen extends Component{
@@ -19,7 +21,7 @@ class CalegScreen extends Component{
 
     getDataCaleg = () => {
         let data = [];
-        calegCollection.orderBy('noUrut').get().then((caleg)=>{
+        calegCollection.orderBy("noUrut", "asc").get().then((caleg)=>{
             caleg.forEach((doc)=>{
                 data.push({
                     id:doc.id,
@@ -33,18 +35,23 @@ class CalegScreen extends Component{
         .catch(err=>{
             console.log(err)
         });
-
     }
 
     render(){
-        console.log(this.props.match);
+        if(!!this.props.location.state){
+            if(!!this.props.location.state.reRender){
+                if(this.props.location.state.reRender){
+                    this.getDataCaleg();
+                }
+            }
+        }
+        const {match} = this.props;
         const mappedDataCaleg = this.state.dataCaleg.map((data,key)=>
             <tr key={key}>
                 <td>{data.noUrut}</td><td>{data.nama}</td>
             </tr>
         );
-        
-        const renderDataCaleg = ({match})=>(
+        const renderDataCaleg = ({props})=>(
             <div>
                 <h2>Data Caleg</h2>
                 <table border="1" style={{width:'75%'}}>
@@ -60,16 +67,10 @@ class CalegScreen extends Component{
             </div>
         );
 
-        const renderAddData = ({match})=>(
-            <div>
-                <h2>{match.params.type}</h2>
-            </div>
-        );
-
         return(
             <Switch> 
-                <Route exact path={this.props.match.path} render={renderDataCaleg}/>
-                <Route path={this.props.match.path + "/:type"} render={renderAddData}/>
+                <Route exact path={match.url} render={renderDataCaleg}/>
+                <Route path={`${match.url}/add`} render={props=><AddCalegScreen {...props} index={match.url}/>}/>
             </Switch>
         );
     }

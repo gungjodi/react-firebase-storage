@@ -1,7 +1,8 @@
 import React from 'react';
-import {Home,Mail,AssignmentInd} from '@material-ui/icons';
+import {Home,Mail,AssignmentInd,AccountBalance} from '@material-ui/icons';
 
 import DashboardScreen from './dashboard';
+import PartaiScreen from './partai';
 import CalegScreen from './caleg';
 import TpsScreen from './tps';
 
@@ -11,19 +12,25 @@ const routes = [
         icon : <Home />,
         path : '/',
         exact : true,
-        component: props=><DashboardScreen {...props}/>,
+        component:DashboardScreen,
+    },
+    {
+        title : 'Data Partai',
+        icon : <AccountBalance />,
+        path : '/dataPartai',
+        component : PartaiScreen,
     },
     {
         title : 'Data Caleg',
         icon : <AssignmentInd />,
         path : '/dataCaleg',
-        component : props=><CalegScreen {...props}/>,
+        component : CalegScreen,
     },
     {
         title : 'Data TPS',
         icon : <Mail />,
         path : '/dataTps',
-        component : props=><TpsScreen {...props}/>
+        component :TpsScreen
     }
 ];
 

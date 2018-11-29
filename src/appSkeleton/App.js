@@ -41,7 +41,7 @@ class App extends React.Component {
         exact
         children={({ match }) => (
           <Link to={menuItem.path} {...rest}>
-            <ListItem button selected={match ? true : false}>  
+            <ListItem button selected={!!match}>
               <ListItemIcon>{menuItem.icon}</ListItemIcon>
               <ListItemText primary={menuItem.title} />
             </ListItem>
@@ -131,7 +131,7 @@ class App extends React.Component {
                           key={index}
                           path={route.path}
                           exact={route.exact}
-                          render={route.component}
+                          component={route.component}
                       />
                   ))}
               </Switch>

@@ -7,41 +7,42 @@ import {IconButton} from "@material-ui/core";
 import {Create, Clear} from '@material-ui/icons';
 
 import {FirestoreDB} from '../../FirebaseApp';
-import AddCalegScreen from './add';
+import AddPartaiScreen from './add';
 
-const calegCollection = FirestoreDB.collection('caleg');
+const partaiCollection = FirestoreDB.collection('partai');
 
-class CalegScreen extends Component{
+class PartaiScreen extends Component{
     state = {
-        dataCaleg : []
+        dataArr : []
     };
 
     componentDidMount(){
         this.mounted=true;
-        this.getDataCaleg();
+        this.getData();
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(!!nextProps.location.state){
+            this.getData();
+        }
     }
 
     componentWillUnmount(){
         this.mounted = false;
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!!nextProps.location.state){
-            this.getDataCaleg();
-        }
-    }
-
-    getDataCaleg = () => {
+    getData = () => {
         let data = [];
-        calegCollection.orderBy("noUrut", "asc").get().then((caleg)=>{
-            caleg.forEach((doc)=>{
+        partaiCollection.get().then((snapshot)=>{
+            snapshot.forEach((doc)=>{
                 data.push({
                     id:doc.id,
                     ...doc.data()
                 });
             });
             if(this.mounted){
-                this.setState({ dataCaleg:data});
+                this.setState({ dataArr:data});
             }
         })
         .catch(err=>{
@@ -50,24 +51,25 @@ class CalegScreen extends Component{
     };
 
     deleteData = (id) => {
-        calegCollection.doc(id).delete().then(()=>{
+        partaiCollection.doc(id).delete().then(()=>{
             console.log(id," DELETED");
-            this.getDataCaleg();
+            this.getData();
         }).catch(err=>{
-            alert("Gagal menghapus data");
-            console.log(err);
+           alert("Gagal menghapus data");
+           console.log(err);
         });
     };
 
     render(){
-        const {classes,match} = this.props;
-        const mappedDataCaleg = this.state.dataCaleg.map((data,key)=>
+        const {classes} = this.props;
+        const {match} = this.props;
+        const mappedData = this.state.dataArr.map((data,key)=>
             <tr key={key}>
-                <td>{data.noUrut}</td><td>{data.nama}</td>
+                <td>{key+1}</td>
                 <td>
                     <div className={classes.tableContentCell}>
                         <div />
-                        <div>{data.partai.nama}</div>
+                        <div>{data.nama}</div>
                         <div>
                             <Link to={`${match.url}/edit/${data.id}`} style={{ textDecoration: 'none',color:'black' }}><IconButton color="inherit"><Create/></IconButton></Link>
                             <IconButton color="inherit" onClick={()=>this.deleteData(data.id)}><Clear/></IconButton>
@@ -76,33 +78,34 @@ class CalegScreen extends Component{
                 </td>
             </tr>
         );
-        const renderDataCaleg = ({props})=>(
+        const renderData = ({props})=>(
             <div>
-                <table border="1" style={{width:'75%'}}>
+                <table border="1" style={{width:'60%'}}>
                   <thead>
                     <tr>
-                      <th style={{width:'10%'}}>No Urut</th><th>Nama</th><th>Partai</th>
+                      <th style={{width:'10%'}}>No</th><th>Nama Partai</th>
                     </tr>
                   </thead>
                   <tbody>
-                      {mappedDataCaleg}
+                      {mappedData}
                   </tbody>
                 </table>
             </div>
         );
 
         return(
-            <Switch>
-                <Route exact path={match.path} component={renderDataCaleg}/>
-                <Route exact path={`${match.path}/:type`} component={AddCalegScreen}/>
-                <Route exact path={`${match.path}/:type/:id`} component={AddCalegScreen}/>
+            <Switch> 
+                <Route exact path={match.path} component={renderData}/>
+                <Route exact path={`${match.path}/:type`} component={AddPartaiScreen}/>
+                <Route exact path={`${match.path}/:type/:id`} component={AddPartaiScreen}/>
             </Switch>
         );
     }
 }
-CalegScreen.propTypes = {
+
+PartaiScreen.propTypes = {
     classes : PropTypes.object.isRequired
 };
 
-export {AddCalegScreen} from './add';
-export default withStyles(styles,{ withTheme: true })(CalegScreen);
+export {AddPartaiScreen} from './add';
+export default withStyles(styles,{ withTheme: true })(PartaiScreen);

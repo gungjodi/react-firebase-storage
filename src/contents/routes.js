@@ -1,10 +1,11 @@
 import React from 'react';
-import {Home,Mail,AssignmentInd,AccountBalance} from '@material-ui/icons';
+import {Home,Place,AssignmentInd,AccountBalance,HowToVote} from '@material-ui/icons';
 
 import DashboardScreen from './dashboard';
 import PartaiScreen from './partai';
 import CalegScreen from './caleg';
 import TpsScreen from './tps';
+import DapilScreen from './dapil';
 
 const routes = [
     {
@@ -28,9 +29,15 @@ const routes = [
     },
     {
         title : 'Data TPS',
-        icon : <Mail />,
+        icon : <HowToVote />,
         path : '/dataTps',
         component :TpsScreen
+    },
+    {
+        title : 'Data Daerah Pilihan (Dapil)',
+        icon : <Place />,
+        path : '/dataDapil',
+        component :DapilScreen
     }
 ];
 

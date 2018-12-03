@@ -14,6 +14,9 @@ const theme = createMuiTheme({
       },
       secondary: deepOrange,
     },
+    typography: {
+        useNextVariants: true,
+    },
 });
 
 ReactDOM.render(

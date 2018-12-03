@@ -35,7 +35,7 @@ class DashboardScreen extends Component {
   dataPerolehanSuaraListener(){
     let data = [];
     perolehanSuaraCollection.onSnapshot(snapshot=>{
-      snapshot.docChanges.forEach(change=>{
+      snapshot.docChanges().forEach(change=>{
         if(change.type==="added"){
           data.push({
             id:change.doc.id,

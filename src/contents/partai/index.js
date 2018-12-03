@@ -3,23 +3,24 @@ import { Route, Link, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import styles from './style';
-import {IconButton} from "@material-ui/core";
+import {IconButton,LinearProgress} from "@material-ui/core";
 import {Create, Clear} from '@material-ui/icons';
 
 import {FirestoreDB} from '../../FirebaseApp';
 import AddPartaiScreen from './add';
 
 const partaiCollection = FirestoreDB.collection('partai');
+const calegCollection = FirestoreDB.collection('caleg');
 
 class PartaiScreen extends Component{
     state = {
-        dataArr : []
+        dataArr : [],
+        loading : false
     };
 
     componentDidMount(){
         this.mounted=true;
         this.getData();
-
     }
 
     componentWillReceiveProps(nextProps) {
@@ -33,6 +34,7 @@ class PartaiScreen extends Component{
     }
 
     getData = () => {
+        this.setState({loading:true});
         let data = [];
         partaiCollection.get().then((snapshot)=>{
             snapshot.forEach((doc)=>{
@@ -43,15 +45,22 @@ class PartaiScreen extends Component{
             });
             if(this.mounted){
                 this.setState({ dataArr:data});
+                this.setState({loading:false});
             }
         })
         .catch(err=>{
+            this.setState({loading:false});
             console.log(err)
         });
     };
 
     deleteData = (id) => {
         partaiCollection.doc(id).delete().then(()=>{
+            calegCollection.where('partai.id','==',id).get().then(caleg=>{
+                caleg.forEach(doc=>{
+                    calegCollection.doc(doc.id).update({partai:{id:'',nama:''}})
+                })
+            }).catch(err=>console.log(err));
             console.log(id," DELETED");
             this.getData();
         }).catch(err=>{
@@ -80,16 +89,20 @@ class PartaiScreen extends Component{
         );
         const renderData = ({props})=>(
             <div>
-                <table border="1" style={{width:'60%'}}>
-                  <thead>
-                    <tr>
-                      <th style={{width:'10%'}}>No</th><th>Nama Partai</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {mappedData}
-                  </tbody>
-                </table>
+                {
+                    this.state.loading?
+                        <LinearProgress/>:
+                        <table border="1" style={{width:'60%'}}>
+                            <thead>
+                            <tr>
+                                <th style={{width:'10%'}}>No</th><th>Nama Partai</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {mappedData}
+                            </tbody>
+                        </table>
+                }
             </div>
         );
 
@@ -107,5 +120,4 @@ PartaiScreen.propTypes = {
     classes : PropTypes.object.isRequired
 };
 
-export {AddPartaiScreen} from './add';
 export default withStyles(styles,{ withTheme: true })(PartaiScreen);

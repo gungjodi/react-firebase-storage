@@ -7,41 +7,43 @@ import {IconButton} from "@material-ui/core";
 import {Create, Clear} from '@material-ui/icons';
 
 import {FirestoreDB} from '../../FirebaseApp';
-import AddCalegScreen from './add';
+import AddDapilScreen from './add';
 
-const calegCollection = FirestoreDB.collection('caleg');
+const dapilCollection = FirestoreDB.collection('dapil');
 
-class CalegScreen extends Component{
+class DapilScreen extends Component{
     state = {
-        dataCaleg : []
+        dataArr : []
     };
 
     componentDidMount(){
         this.mounted=true;
-        this.getDataCaleg();
+        this.getData();
+
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(!!nextProps.location.state){
+            this.getData();
+        }
     }
 
     componentWillUnmount(){
         this.mounted = false;
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!!nextProps.location.state){
-            this.getDataCaleg();
-        }
-    }
-
-    getDataCaleg = () => {
+    getData = () => {
         let data = [];
-        calegCollection.orderBy("noUrut", "asc").get().then((caleg)=>{
-            caleg.forEach((doc)=>{
+        dapilCollection.orderBy("dapil").get().then((snapshot)=>{
+            snapshot.forEach((doc)=>{
                 data.push({
                     id:doc.id,
-                    ...doc.data()
+                    dapil:doc.data().dapil,
+                    ...doc.data().lokasi
                 });
             });
             if(this.mounted){
-                this.setState({ dataCaleg:data});
+                this.setState({ dataArr:data});
             }
         })
         .catch(err=>{
@@ -50,24 +52,25 @@ class CalegScreen extends Component{
     };
 
     deleteData = (id) => {
-        calegCollection.doc(id).delete().then(()=>{
+        dapilCollection.doc(id).delete().then(()=>{
             console.log(id," DELETED");
-            this.getDataCaleg();
+            this.getData();
         }).catch(err=>{
-            alert("Gagal menghapus data");
-            console.log(err);
+           alert("Gagal menghapus data");
+           console.log(err);
         });
     };
 
     render(){
-        const {classes,match} = this.props;
-        const mappedDataCaleg = this.state.dataCaleg.map((data,key)=>
+        const {classes} = this.props;
+        const {match} = this.props;
+        const mappedData = this.state.dataArr.map((data,key)=>
             <tr key={key}>
-                <td>{data.noUrut}</td><td>{data.nama}</td>
+                <td>{data.dapil}</td>
                 <td>
                     <div className={classes.tableContentCell}>
                         <div />
-                        <div>{data.partai.nama}</div>
+                        <div>{`${data.kabupaten.name} - ${data.kecamatan.name}`}</div>
                         <div>
                             <Link to={`${match.url}/edit/${data.id}`} style={{ textDecoration: 'none',color:'black' }}><IconButton color="inherit"><Create/></IconButton></Link>
                             <IconButton color="inherit" onClick={()=>this.deleteData(data.id)}><Clear/></IconButton>
@@ -76,32 +79,33 @@ class CalegScreen extends Component{
                 </td>
             </tr>
         );
-        const renderDataCaleg = ({props})=>(
+        const renderData = ({props})=>(
             <div>
-                <table border="1" style={{width:'75%'}}>
+                <table border="1" style={{width:'60%'}}>
                   <thead>
                     <tr>
-                      <th style={{width:'10%'}}>No Urut</th><th>Nama</th><th>Partai</th>
+                      <th style={{width:'20%'}}>Daerah Pilihan</th><th>Lokasi</th>
                     </tr>
                   </thead>
                   <tbody>
-                      {mappedDataCaleg}
+                      {mappedData}
                   </tbody>
                 </table>
             </div>
         );
 
         return(
-            <Switch>
-                <Route exact path={match.path} component={renderDataCaleg}/>
-                <Route exact path={`${match.path}/:type`} component={AddCalegScreen}/>
-                <Route exact path={`${match.path}/:type/:id`} component={AddCalegScreen}/>
+            <Switch> 
+                <Route exact path={match.path} component={renderData}/>
+                <Route exact path={`${match.path}/:type`} component={AddDapilScreen}/>
+                <Route exact path={`${match.path}/:type/:id`} component={AddDapilScreen}/>
             </Switch>
         );
     }
 }
-CalegScreen.propTypes = {
+
+DapilScreen.propTypes = {
     classes : PropTypes.object.isRequired
 };
 
-export default withStyles(styles,{ withTheme: true })(CalegScreen);
+export default withStyles(styles,{ withTheme: true })(DapilScreen);

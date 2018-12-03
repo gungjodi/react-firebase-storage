@@ -40,12 +40,14 @@ class App extends React.Component {
         path={menuItem.path}
         exact
         children={({ match }) => (
-          <Link to={menuItem.path} {...rest}>
-            <ListItem button selected={!!match}>
-              <ListItemIcon>{menuItem.icon}</ListItemIcon>
-              <ListItemText primary={menuItem.title} />
-            </ListItem>
-          </Link>
+            <Tooltip title={menuItem.title}>
+                <Link to={menuItem.path} {...rest}>
+                    <ListItem button selected={!!match}>
+                        <ListItemIcon>{menuItem.icon}</ListItemIcon>
+                        <ListItemText primary={menuItem.title} />
+                    </ListItem>
+                </Link>
+            </Tooltip>
         )}
       />
     );

@@ -108,7 +108,7 @@ class AddCalegScreen extends Component{
                     });
             }
             if(this.props.match.params.type==="edit"){
-                calegCollection.doc(this.props.match.params.id).set(dataCaleg)
+                calegCollection.doc(this.props.match.params.id).update(dataCaleg)
                     .then(()=>{
                         this.props.history.push(this.state.dir,{back:true});
                     })

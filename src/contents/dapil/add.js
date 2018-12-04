@@ -9,7 +9,6 @@ const dapilCollection = FirestoreDB.collection('dapil');
 const wilayahBaliCollection = FirestoreDB.collection('wilayahBali');
 const kecamatanDocs = wilayahBaliCollection.where("type","==","kecamatan");
 
-
 class AddDapilScreen extends Component{
     constructor(){
         super();

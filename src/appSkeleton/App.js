@@ -22,6 +22,8 @@ class App extends React.Component {
     this.setState({ open: false });
   };
 
+
+
   render() {
     const {classes,theme} = this.props;
 
@@ -120,32 +122,34 @@ class App extends React.Component {
       </Drawer>
     );
 
+
     return (
-      <div className={classes.root}>
-          <CssBaseline />
-          <Route component={appBar}/>
-          <Route component={drawerWrapper}/>
-          <main className={classes.content}>
-              <div className={classes.toolbar} />
-              <Switch>
-                  {routes.map((route,index)=>(
-                      <Route 
-                          key={index}
-                          path={route.path}
-                          exact={route.exact}
-                          component={route.component}
-                      />
-                  ))}
-              </Switch>
-          </main>
-      </div>
+        <div className={classes.root}>
+            <CssBaseline />
+            <Route component={appBar}/>
+            <Route component={drawerWrapper}/>
+            <main className={classes.content}>
+                <div className={classes.toolbar} />
+
+                <Switch>
+                    {routes.map((route,index)=>(
+                        <Route
+                            key={index}
+                            path={route.path}
+                            exact={route.exact}
+                            component={route.component}
+                        />
+                    ))}
+                </Switch>
+            </main>
+        </div>
     );
   }
 }
 
 App.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired,
+    theme: PropTypes.object.isRequired,
 };
 
 export default withStyles(AppStyles, { withTheme: true })(App);

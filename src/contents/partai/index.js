@@ -9,7 +9,7 @@ import {Create, Clear} from '@material-ui/icons';
 import {FirestoreDB} from '../../FirebaseApp';
 import AddPartaiScreen from './add';
 
-const partaiCollection = FirestoreDB.collection('partai');
+const partaiCollection = FirestoreDB.collection('dataPartai');
 const calegCollection = FirestoreDB.collection('caleg');
 
 class PartaiScreen extends Component{
@@ -36,7 +36,7 @@ class PartaiScreen extends Component{
     getData = () => {
         this.setState({loading:true});
         let data = [];
-        partaiCollection.get().then((snapshot)=>{
+        partaiCollection.orderBy('no').get().then((snapshot)=>{
             snapshot.forEach((doc)=>{
                 data.push({
                     id:doc.id,
@@ -74,11 +74,11 @@ class PartaiScreen extends Component{
         const {match} = this.props;
         const mappedData = this.state.dataArr.map((data,key)=>
             <tr key={key}>
-                <td>{key+1}</td>
+                <td>{data.no}</td>
                 <td>
                     <div className={classes.tableContentCell}>
                         <div />
-                        <div>{data.nama}</div>
+                        <div>{`Partai ${data.nama}`}</div>
                         <div>
                             <Link to={`${match.url}/edit/${data.id}`} style={{ textDecoration: 'none',color:'black' }}><IconButton color="inherit"><Create/></IconButton></Link>
                             <IconButton color="inherit" onClick={()=>this.deleteData(data.id)}><Clear/></IconButton>

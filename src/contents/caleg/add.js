@@ -14,7 +14,9 @@ class AddCalegScreen extends Component{
         this.state={
             nama:"",
             noUrut:"",
+            dapil:{},
             partai:{},
+            dataDapil:[],
             dataPartai:[],
             labelWidth: 0,
             id:"",

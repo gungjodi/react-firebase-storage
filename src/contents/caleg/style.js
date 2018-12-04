@@ -21,6 +21,9 @@ const styles = theme => ({
         flexDirection: 'row',
         alignItems:'center',
         justifyContent:'space-between'
+    },
+    gridList:{
+        display:'block'
     }
 });
 
